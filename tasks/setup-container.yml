@@ -1,0 +1,42 @@
+- name: Compose a container
+  hosts: ptvserver
+  tasks:
+  - name: Install docker-compose
+    become: yes
+    shell: |
+        set -e
+        if [ -x which docker-compose ]; then
+            exit 1
+        else
+            curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            exit 2
+        fi
+    register: result
+    changed_when: result.rc == 2
+    failed_when: result.rc not in [ 1, 2 ]
+  - name: Upload recipes
+    copy: src=../files/ dest=/home/{{ansible_user}}/
+  - name: Configure ssh agent forwarding
+    become: yes
+    shell: echo "AllowAgentForwarding yes" > /etc/ssh/sshd_config.d/ansible_config.conf
+  - name: Reboot the machine (Wait for 1 min)
+    become: yes
+    reboot:
+      reboot_timeout: 60
+  - name: Build Mirakurun
+    become: yes
+    become_flags: '-E'
+    shell: bash -lc 'DOCKER_BUILDKIT=1 docker build -t maleicacid/mirakurun /home/{{ansible_user}}/docker --ssh default=${SSH_AUTH_SOCK}'
+  - name: First spawning
+    become: yes
+    shell: docker-compose -f /home/{{ansible_user}}/docker/docker-compose.yml up -d
+  - name: Flush custom config files]
+    become: yes
+    copy: src=../config dest=/usr/local/mirakurun/
+  - name: restart container
+    become: true\
+    shell: |
+        docker-compose -f /home/{{ansible_user}}/docker/docker-compose.yml down
+        docker-compose -f /home/{{ansible_user}}/docker/docker-compose.yml up -d
+

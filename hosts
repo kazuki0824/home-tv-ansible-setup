@@ -1,0 +1,3 @@
+[ptvserver]
+ptvserver.lan ansible_user=kazuki
+

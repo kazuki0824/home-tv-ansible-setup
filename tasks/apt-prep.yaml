@@ -1,0 +1,39 @@
+- name: Preparation
+  hosts: ptvserver
+  become: yes
+  tasks:
+  - name: Fetch a GPG key for Docker
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  - name: Add docker.com official apt
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+      state: present
+  - name: Update index
+    apt:
+        update_cache: yes
+  - name: Upgrade packages
+    apt:
+        upgrade: yes
+  - name: Install multi packages
+    apt:
+        name:
+        - build-essential
+        - cmake
+        - dkms
+        - curl
+        - git
+        - unzip
+        - language-pack-ja
+        - wireless-tools
+        - hostapd
+        - network-manager
+        - zsh
+        - avahi-daemon
+        - alsa-base
+        - alsa-utils
+        - shairport-sync
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io

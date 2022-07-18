@@ -1,0 +1,58 @@
+- name: Preparation
+  hosts: ptvserver
+  tasks:
+  - name: Clone px4-drv
+    git:
+        clone: yes
+        repo: https://github.com/nns779/px4_drv.git
+        dest: /tmp/px4_drv
+        version: develop
+  - name: Unzip BDA
+    unarchive:
+        src: http://plex-net.co.jp/plex/pxw3u4/pxw3u4_BDA_ver1x64.zip
+        remote_src: yes
+        dest: /tmp/px4_drv/fwtool
+  - name: Build fwtool
+    make:
+        chdir: /tmp/px4_drv/fwtool
+        target: all
+  - name: Run fwtool
+    command:
+        chdir: /tmp/px4_drv/fwtool
+        argv: 
+            - ./fwtool
+            - pxw3u4_BDA_ver1x64/PXW3U4.sys
+            - it930x-firmware.bin
+  - name: Copy firmware
+    become: yes
+    command:
+        cmd: mkdir -p /lib/firmware
+  - name: Copy firmware
+    become: yes
+    command:
+        chdir: /tmp/px4_drv/fwtool
+        argv:
+            - cp
+            - it930x-firmware.bin
+            - /lib/firmware
+  - name: Build px4-drv
+    become: yes
+    shell: |
+        set -e
+        cd /tmp/px4_drv
+        if [ ! -e /usr/src/px4_drv-0.2.1 ]; then
+            cp -a  ./ /usr/src/px4_drv-0.2.1
+            dkms add px4_drv/0.2.1
+            dkms install px4_drv/0.2.1
+            modprobe px4_drv
+            exit 0
+        else
+            exit 1
+        fi
+    register: result
+    changed_when: result.rc == 0
+    failed_when: result.rc not in [ 0, 1 ]
+  - name: Update initramfs
+    become: yes
+    command: update-initramfs -u -v
+

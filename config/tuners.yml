@@ -1,0 +1,34 @@
+- name: PX4-S1
+  types:
+    - BS
+    - CS
+  command: recpt1 --device /dev/px4video0 --lnb 15 C<channel> - -
+  decoder: arib-b25-stream-test
+  isDisabled: true
+
+- name: PX4-S2
+  types:
+    - BS
+    - CS
+  command: recpt1 --device /dev/px4video1 --lnb 15 C<channel> - -
+  decoder: arib-b25-stream-test
+  isDisabled: true
+
+- name: PX4-T1
+  types:
+    - GR
+  command: /rec/bin/recisdb-rust --device /dev/px4video2 -c T<channel> -n
+
+- name: PX4-T2
+  types:
+    - GR
+  command: /rec/bin/recisdb-rust --device /dev/px4video3 -c T<channel> -n
+
+- name: TBS6922
+  types:
+    - SKY
+  command: szap-s2j -c /usr/local/etc/szap-s2j.conf -l <satellite> -S 1 -p -r -M 5 -C 35 <channel>
+  dvbDevicePath: /dev/dvb/adapter0/dvr0
+  decoder: arib-b1-stream-test
+  isDisabled: true
+
