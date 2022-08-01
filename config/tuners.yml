@@ -2,27 +2,23 @@
   types:
     - BS
     - CS
-  command: recpt1 --device /dev/px4video0 --lnb 15 C<channel> - -
-  decoder: arib-b25-stream-test
-  isDisabled: true
+  command: recisdb --key0 0x8d8206c62eb1410d --key1 0x15f8c5bf840b6694 --key0 0x0513140109160811 --key1 0x6436036009466482 --key0 0xc63a0c76a967f2d4 --key1 0x45726d6569794d65 --device /dev/px4video0 -c <channel> -
 
 - name: PX4-S2
   types:
     - BS
     - CS
-  command: recpt1 --device /dev/px4video1 --lnb 15 C<channel> - -
-  decoder: arib-b25-stream-test
-  isDisabled: true
+  command: recisdb --key0 0x8d8206c62eb1410d --key1 0x15f8c5bf840b6694 --key0 0x0513140109160811 --key1 0x6436036009466482 --key0 0xc63a0c76a967f2d4 --key1 0x45726d6569794d65 --device /dev/px4video1 -c <channel> -
 
 - name: PX4-T1
   types:
     - GR
-  command: /rec/bin/recisdb-rust --device /dev/px4video2 -c T<channel> -n
+  command: recisdb --key0 0x8d8206c62eb1410d --key1 0x15f8c5bf840b6694 --key0 0x0513140109160811 --key1 0x6436036009466482 --key0 0xc63a0c76a967f2d4 --key1 0x45726d6569794d65 --device /dev/px4video2 -c T<channel> -
 
 - name: PX4-T2
   types:
     - GR
-  command: /rec/bin/recisdb-rust --device /dev/px4video3 -c T<channel> -n
+  command: recisdb --key0 0x8d8206c62eb1410d --key1 0x15f8c5bf840b6694 --key0 0x0513140109160811 --key1 0x6436036009466482 --key0 0xc63a0c76a967f2d4 --key1 0x45726d6569794d65 --device /dev/px4video3 -c <channel> -
 
 - name: TBS6922
   types:

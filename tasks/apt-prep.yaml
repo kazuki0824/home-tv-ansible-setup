@@ -37,4 +37,11 @@
         - docker-ce
         - docker-ce-cli
         - docker-compose-plugin
-        - containerd.io
+        - docker-ce-rootless-extras
+        - uidmap
+        - dbus-user-session
+  - name: Install docker rootless
+    become: no
+    command: |
+      dockerd-rootless-setuptool.sh install
+      echo 'export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock' >> /home/{{ansible_user}}/.bashrc

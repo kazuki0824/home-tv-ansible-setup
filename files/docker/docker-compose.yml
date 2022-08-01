@@ -5,8 +5,8 @@ networks:
 services:
   mirakurun:
     build:
-      context: ./
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     image: maleicacid/mirakurun
     container_name: mirakurun
     cap_add:
@@ -27,11 +27,11 @@ services:
       - /dev/px4video2:/dev/px4video2
       - /dev/px4video3:/dev/px4video3
     volumes:
-      - /usr/local/mirakurun/run/:/var/run/
-      - /usr/local/mirakurun/opt/:/opt/
-      - /usr/local/mirakurun/config/:/app-config/
-      - /usr/local/mirakurun/data/:/app-data/
-    restart: always
+      - /home/kazuki/docker/mirakurun/run/:/var/run/
+      - /home/kazuki/docker/mirakurun/opt/:/opt/
+      - /home/kazuki/docker/mirakurun/config/:/app-config/
+      - /home/kazuki/docker/mirakurun/data/:/app-data/
+    restart: unless-stopped
     logging:
       driver: json-file
       options:

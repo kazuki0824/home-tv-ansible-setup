@@ -55,4 +55,8 @@
   - name: Update initramfs
     become: yes
     command: update-initramfs -u -v
+  - name: Reboot the machine (Wait for 1 min)
+    become: yes
+    reboot:
+      reboot_timeout: 60
 

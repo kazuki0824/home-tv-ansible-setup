@@ -2,27 +2,25 @@
   hosts: ptvserver
   tasks:
   - name: Upload recipes
-    copy: src=../files/ dest=/home/{{ansible_user}}/
+    copy: src=../files/docker/ dest=/home/{{ansible_user}}/docker/
+  - name: Flush custom config files
+    become: no
+    copy: src=../config/ dest=/home/{{ansible_user}}/docker/mirakurun/config/
   - name: Configure ssh agent forwarding
     become: yes
     shell: echo "AllowAgentForwarding yes" > /etc/ssh/sshd_config.d/ansible_config.conf
-  - name: Reboot the machine (Wait for 1 min)
-    become: yes
-    reboot:
-      reboot_timeout: 60
-  - name: Build Mirakurun
-    become: yes
-    become_flags: '-E'
-    shell: bash -lc 'DOCKER_BUILDKIT=1 docker build -t maleicacid/mirakurun /home/{{ansible_user}}/docker --ssh default=${SSH_AUTH_SOCK}'
   - name: First spawning
     become: yes
-    shell: docker compose -f /home/{{ansible_user}}/docker/docker-compose.yml up -d
-  - name: Flush custom config files]
-    become: yes
-    copy: src=../config dest=/usr/local/mirakurun/
-  - name: restart container
-    become: true\
     shell: |
-        docker compose -f /home/{{ansible_user}}/docker/docker-compose.yml down
-        docker compose -f /home/{{ansible_user}}/docker/docker-compose.yml up -d
-
+      export DOCKER_HOST=unix:///run/user/$(id {{ansible_user}} -u)/docker.sock
+      docker compose run --rm -e SETUP=true mirakurun --build
+    args:
+      chdir: docker/
+  - name: Restart container
+    become: yes
+    shell: |
+      export DOCKER_HOST=unix:///run/user/$(id {{ansible_user}} -u)/docker.sock
+      docker compose down
+      docker compose up -d
+    args:
+      chdir: docker/
