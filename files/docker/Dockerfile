@@ -2,6 +2,7 @@ FROM chinachu/mirakurun
 WORKDIR /tmp
 
 ADD ./recisdb /usr/bin/recisdb
+ADD ./tschscan/ /tschscan/
 #ADD ./recisdb_1.0.0_amd64.deb ./recisdb.deb
 #ADD https://github.com/kazuki0824/recisdb-rs/releases/download/1.0.0/recisdb_1.0.0_amd64.deb ./recisdb.deb
 RUN apt-get update -q && \

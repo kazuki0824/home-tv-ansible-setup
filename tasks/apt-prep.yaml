@@ -16,7 +16,7 @@
   - name: Upgrade packages
     apt:
         upgrade: yes
-  - name: Install multi packages
+  - name: Install multiple packages
     apt:
         name:
         - build-essential
